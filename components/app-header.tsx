@@ -23,12 +23,12 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
             <UserMenu />
           ) : (
             <>
-              <button className="px-4 py-2 rounded-lg text-primary font-medium bg-white hover:bg-white/90 transition-colors">
+              <Link href="/signup" className="px-4 py-2 rounded-lg text-primary font-medium bg-white hover:bg-white/90 transition-colors">
                 Registrarse
-              </button>
-              <button className="px-4 py-2 rounded-lg text-white font-medium bg-accent hover:bg-accent/90 transition-colors">
+              </Link>
+              <Link href="/login" className="px-4 py-2 rounded-lg text-white font-medium bg-accent hover:bg-accent/90 transition-colors">
                 Iniciar sesión
-              </button>
+              </Link>
             </>
           )}
         </div>
