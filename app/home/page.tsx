@@ -3,7 +3,6 @@ import { ChatGrid } from "@/components/chat-grid"
 import { CreateChatButton } from "@/components/create-chat-button"
 import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
-import { Brain } from "lucide-react"
 
 export default function HomePage() {
   return (
@@ -14,8 +13,8 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="bg-gradient-to-b from-primary/5 to-transparent py-16 px-6">
           <div className="max-w-7xl mx-auto text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
-              <Brain className="w-10 h-10 text-primary" />
+            <div className="inline-flex items-center justify-center w-20 h-20">
+              <img src="/tinyLogoBlue.png" alt="Logo"/>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">ChatHub</h2>
             <p className="text-xl text-muted-foreground mb-2">

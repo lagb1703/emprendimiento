@@ -2,7 +2,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { verifyToken } from "./lib/jwt"
 
 // Rutas que requieren autenticación
-const protectedRoutes = ["/chats", "/admin", "/payment", "/home"]
+// const protectedRoutes = ["/chats", "/admin", "/payment", "/home"]
+
+// SOLO PARA ENTORNO DE FRONT
+const protectedRoutes = ["/lol"]
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
