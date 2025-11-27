@@ -18,10 +18,9 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-3 transition-opacity hover:opacity-80">
           <div className="flex items-center justify-center">
-            <img src="/tinyLogoWhite.png" alt="ChatHub Logo" className="h-8 dark:block hidden" />
-            <img src="/tinyLogoWhite.png" alt="ChatHub Logo" className="h-8 dark:hidden" />
+            <img src="/fullWhiteLogo.png" alt="ChatHub Logo" className="h-8 dark:block hidden" />
+            <img src="/fullWhiteLogo.png" alt="ChatHub Logo" className="h-8 dark:hidden" />
           </div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">ChatHub</h1>
         </Link>
 
         {/* Desktop Navigation */}

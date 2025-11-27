@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
-  Brain,
   Bot,
   Users,
   Wrench,
@@ -18,11 +17,7 @@ import {
   User,
   Mail,
   Phone,
-  Home,
-  Instagram,
-  Facebook,
-  Github,
-  Send,
+  Home
 } from "lucide-react"
 import Link from "next/link"
 
@@ -32,7 +27,7 @@ export default function HomePage() {
       <AppHeader showUserMenu={false} />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-muted/30 to-white px-4 py-12 sm:px-6 md:py-20 lg:py-24">
+      <section className="relative overflow-hidden bg-gradient-to-br from-muted/30 to-white px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2">
             <div className="space-y-6 text-center lg:text-left">
@@ -55,9 +50,18 @@ export default function HomePage() {
             </div>
             <div className="flex justify-center lg:justify-end">
               <div className="relative h-64 w-64 sm:h-80 sm:w-80 md:h-96 md:w-96">
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-secondary to-primary p-6 shadow-2xl sm:p-8">
-                  <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
-                    <Brain className="h-32 w-32 text-primary sm:h-40 sm:w-40 md:h-48 md:w-48" />
+                {/* Outer blue ring */}
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 p-7 shadow-2xl">
+                  {/* Inner green/teal ring */}
+                  <div className="h-full w-full rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 p-2">
+                    {/* White center circle */}
+                    <div className="flex h-full w-full items-center justify-center rounded-full">
+                      {/* Brain icon container */}
+                      <div className="flex h-full w-full items-center justify-center p-8">
+                        <img src="/tinyLogoWhite.png" alt="ChatHub Logo" className="dark:block hidden" />
+                        <img src="/tinyLogoWhite.png" alt="ChatHub Logo" className="dark:hidden" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

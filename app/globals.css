@@ -17,7 +17,7 @@
   --primary-foreground: oklch(1 0 0);
 
   /* Updated secondary to green/turquoise accent */
-  --secondary: oklch(0.65 0.2 165);
+  --secondary:rgb(0,217,182);
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.75 0.02 260);
   --muted-foreground: oklch(0.45 0.02 260);

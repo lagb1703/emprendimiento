@@ -10,10 +10,10 @@ export function AppFooter() {
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
-                <Brain className="w-5 h-5" />
+              <div className="flex items-center justify-center">
+                <img src="/fullWhiteLogo.png" alt="ChatHub Logo" className="h-8 dark:block hidden" />
+                <img src="/fullWhiteLogo.png" alt="ChatHub Logo" className="h-8 dark:hidden" />
               </div>
-              <span className="font-bold text-lg">ChatHub</span>
             </div>
             <p className="text-sm text-white/70">
               Accede a múltiples chats de IA potenciados por las últimas tecnologías de inteligencia artificial
