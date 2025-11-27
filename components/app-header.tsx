@@ -18,6 +18,16 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
           <h1 className="text-2xl font-bold">ChatHub</h1>
         </Link>
 
+        {/* Navigation Links */}
+        <nav className="hidden md:flex items-center gap-6">
+          <Link href="/about" className="text-primary-foreground hover:text-primary-foreground/80 transition-colors">
+            About Us
+          </Link>
+          <Link href="/faq" className="text-primary-foreground hover:text-primary-foreground/80 transition-colors">
+            FAQ
+          </Link>
+        </nav>
+
         <div className="flex items-center gap-4">
           {showUserMenu ? (
             <UserMenu />

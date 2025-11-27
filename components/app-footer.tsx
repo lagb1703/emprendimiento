@@ -52,8 +52,13 @@ export function AppFooter() {
             <h3 className="font-semibold mb-4 text-white">Company</h3>
             <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <Link href="#" className="hover:text-white transition-colors">
+                <Link href="/about" className="hover:text-white transition-colors">
                   About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:text-white transition-colors">
+                  FAQ
                 </Link>
               </li>
               <li>
