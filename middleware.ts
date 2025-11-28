@@ -10,6 +10,11 @@ const protectedRoutes = ["/lol"]
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  // Redirect root to /home to prevent blank page flash
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/home", request.url))
+  }
+
   // Revisar si la ruta requiere autenticación
   const isProtected = protectedRoutes.some((route) => pathname.startsWith(route))
 

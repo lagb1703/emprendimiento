@@ -20,33 +20,8 @@ export function AppFooter() {
             </p>
           </div>
 
-          {/* Use Cases Section */}
           <div>
-            <h3 className="font-semibold mb-4 text-white">Casos de Uso</h3>
-            <ul className="space-y-2 text-sm text-white/70">
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Web Designers
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Marketers
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Small Business
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Website Builder
-                </Link>
-              </li>
-            </ul>
           </div>
-
           {/* Company Section */}
           <div>
             <h3 className="font-semibold mb-4 text-white">Company</h3>
@@ -84,31 +59,24 @@ export function AppFooter() {
             <h3 className="font-semibold mb-4 text-white">Follow us</h3>
             <div className="flex gap-4">
               <a
-                href="#"
+                href="https://www.instagram.com/goodhealth37?igsh=ZWdmbXdqNTJ5aDlj"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+                href="https://github.com/lagb1703/emprendimiento"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
               >
                 <Github className="w-5 h-5" />
               </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-              >
-                <Send className="w-5 h-5" />
-              </a>
             </div>
           </div>
+          
         </div>
 
         {/* Divider */}

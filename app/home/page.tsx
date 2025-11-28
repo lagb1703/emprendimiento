@@ -1,3 +1,4 @@
+import React from "react"
 import { CreateChatButton } from "@/components/create-chat-button"
 import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
@@ -7,7 +8,12 @@ import { StatCard } from "@/components/stat-card"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import {
+import { Bot, Users, Wrench, Languages, Smile, Stethoscope, Calendar, User, Mail, Phone, Home } from "lucide-react"
+import Link from "next/link"
+import { homeContent } from "@/lib/content/home"
+
+// Icon mapping helper
+const iconMap = {
   Bot,
   Users,
   Wrench,
@@ -18,15 +24,30 @@ import {
   User,
   Mail,
   Phone,
-  Home
-} from "lucide-react"
-import Link from "next/link"
+  Home,
+}
 
 export default function HomePage() {
+  // Add error handling for content loading
+  let content
+  try {
+    content = homeContent
+  } catch (error) {
+    console.error('Error loading home content:', error)
+    // Fallback content structure
+    content = {
+      problem: { description: [], badge: '', title: '', link: { text: '', href: '' }, image: { src: '', alt: '' } },
+      services: { badge: '', title: '', cards: [] },
+      stats: { cards: [] },
+      appointment: { badge: '', title: '', form: { name: { label: '', placeholder: '' }, email: { label: '', placeholder: '' }, phone: { label: '', placeholder: '' }, service: { label: '', placeholder: '' }, submit: '' }, brand: { name: '', image: { src: '', alt: '' } } },
+      solution: { description: [], badge: '', title: '', link: { text: '', href: '' }, image: { src: '', alt: '' } },
+      newsletter: { title: '', description: '', form: { placeholder: '', button: '' } }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <AppHeader showUserMenu={false} />
-
       <HeroSection />
 
       {/* Problem Section */}
@@ -36,28 +57,27 @@ export default function HomePage() {
             <div className="order-2 lg:order-1">
               <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-secondary/10">
                 <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="Mental health illustration"
+                  src={content.problem.image.src || "/placeholder.svg"}
+                  alt={content.problem.image.alt}
                   className="h-full w-full object-cover"
                 />
               </div>
             </div>
             <div className="order-1 space-y-4 sm:space-y-6 lg:order-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary sm:text-sm">Who we are?</p>
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">El problema</h2>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Millones de personas como Laura, una estudiante universitaria con poco tiempo y recursos, o Andrés, un
-                empleado con jornadas laborales extensas que no se atreve a pedir ayuda, enfrentan cada día estrés,
-                ansiedad y falta de apoyo emocional.
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary sm:text-sm">
+                {content.problem.badge}
               </p>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                El acceso a servicios de salud mental sigue siendo costoso, limitado y poco oportuno.
-              </p>
+              <h2 className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">{content.problem.title}</h2>
+              {content.problem.description.map((paragraph, index) => (
+                <p key={index} className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  {paragraph}
+                </p>
+              ))}
               <Link
-                href="#"
+                href={content.problem.link.href}
                 className="inline-flex items-center gap-2 text-base font-semibold text-secondary hover:underline sm:text-lg min-h-[44px]"
               >
-                Know more →
+                {content.problem.link.text}
               </Link>
             </div>
           </div>
@@ -68,180 +88,84 @@ export default function HomePage() {
       <section className="bg-muted/30 px-4 py-12 sm:px-6 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl space-y-8 sm:space-y-12">
           <div className="text-center">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary sm:mb-4 sm:text-sm">Nuestros servicios</p>
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary sm:mb-4 sm:text-sm">
+              {content.services.badge}
+            </p>
             <h2 className="mx-auto max-w-4xl text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
-              En GoodHealth combinamos lo mejor de la tecnología
-              <span className="hidden sm:inline">
-                <br />
-              </span>
-              <span className="sm:hidden"> </span>
-              y la psicología para ofrecerte apoyo real
+              {content.services.title}
             </h2>
           </div>
           <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            <ServiceCard
-              icon={Bot}
-              title="Psicólogo virtual con IA"
-              description="Entrenado en salud mental, disponible las 24 horas."
-            />
-            <ServiceCard
-              icon={Users}
-              title="Consultas con psicólogos profesionales"
-              description="Encuentra a tu psicólogo ideal y accesibles."
-              featured
-            />
-            <ServiceCard
-              icon={Wrench}
-              title="Herramientas de autoayuda"
-              description="Recursos para tu salud mental siempre disponibles."
-            />
-            <ServiceCard icon={Languages} title="Múltiples idiomas" description="Para romper barreras." />
+            {content.services.cards.map((service, index) => (
+              <ServiceCard
+                key={index}
+                icon={iconMap[service.icon as keyof typeof iconMap]}
+                title={service.title}
+                description={service.description}
+                featured={service.featured}
+              />
+            ))}
           </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="bg-primary px-4 py-12 sm:px-6 sm:py-16 md:py-20">
+      {/* <section className="bg-primary px-4 py-12 sm:px-6 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
-            <StatCard 
-              icon={<Smile className="h-6 w-6 sm:h-8 sm:w-8" />} 
-              title="Happy Patients" 
-              value="30,00,000+" 
-              subtitle="Satisfied customers worldwide" 
-            />
-            <StatCard 
-              icon={<Stethoscope className="h-6 w-6 sm:h-8 sm:w-8" />} 
-              title="Experienced Doctors" 
-              value="409+" 
-              subtitle="Professional healthcare providers" 
-            />
-            <div className="sm:col-span-2 lg:col-span-1">
-              <StatCard 
-                icon={<Calendar className="h-6 w-6 sm:h-8 sm:w-8" />} 
-                title="Years of Experience" 
-                value="18+" 
-                subtitle="Trusted healthcare service" 
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Appointment Section */}
-      <section className="px-4 py-12 sm:px-6 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-            <Card className="order-2 p-6 sm:p-8 lg:order-1">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-primary sm:text-sm">Need consultation?</p>
-              <h2 className="mb-6 text-2xl font-bold text-foreground sm:mb-8 sm:text-3xl">Book an appointment</h2>
-              <form className="space-y-4 sm:space-y-6">
-                <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <User className="h-4 w-4" />
-                      Name
-                    </label>
-                    <Input placeholder="Enter name here" className="min-h-[44px]" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <Mail className="h-4 w-4" />
-                      Email
-                    </label>
-                    <Input placeholder="Enter email here" type="email" className="min-h-[44px]" />
-                  </div>
-                </div>
-                <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <Phone className="h-4 w-4" />
-                      Phone
-                    </label>
-                    <Input placeholder="Enter phone no. here" type="tel" className="min-h-[44px]" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground">
-                      <Home className="h-4 w-4" />
-                      Service
-                    </label>
-                    <Input placeholder="Select service" className="min-h-[44px]" />
-                  </div>
-                </div>
-                <Button className="w-full bg-primary text-white hover:bg-primary/90 min-h-[48px]" size="lg">
-                  Submit
-                </Button>
-              </form>
-            </Card>
-            <div className="order-1 flex min-h-[300px] items-center justify-center rounded-2xl bg-gradient-to-br from-secondary to-secondary/80 p-8 text-center sm:min-h-[400px] sm:p-12 lg:order-2">
-              <div className="space-y-4">
-                <div className="mx-auto h-24 w-24 overflow-hidden rounded-full bg-white/20 sm:h-32 sm:w-32">
-                  <img
-                    src="/placeholder.svg?height=200&width=200"
-                    alt="Medifine"
-                    className="h-full w-full object-cover"
+            {content.stats.cards.map((stat, index) => {
+              const Icon = iconMap[stat.icon as keyof typeof iconMap]
+              return (
+                <div key={index} className={index === 2 ? "sm:col-span-2 lg:col-span-1" : ""}>
+                  <StatCard
+                    icon={<Icon className="h-6 w-6 sm:h-8 sm:w-8" />}
+                    title={stat.title}
+                    value={stat.value}
+                    subtitle={stat.subtitle}
                   />
                 </div>
-                <h3 className="text-xl font-bold text-white sm:text-2xl">Medifine</h3>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* Problem Section 2 */}
+      {/* Solution Section */}
       <section className="bg-muted/30 px-4 py-12 sm:px-6 sm:py-16 md:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid items-center gap-8 md:gap-12 lg:grid-cols-2">
-            <div className="order-2 lg:order-1">
+            
+            <div className="order-1 space-y-4 sm:space-y-6 lg:order-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary sm:text-sm">
+                {content.solution.badge}
+              </p>
+              <h2 className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">{content.solution.title}</h2>
+              {content.solution.description.map((paragraph, index) => (
+                <p key={index} className="text-base leading-relaxed text-muted-foreground sm:text-lg">
+                  {paragraph}
+                </p>
+              ))}
+              <Link
+                href={content.solution.link.href}
+                className="inline-flex items-center gap-2 text-base font-semibold text-secondary hover:underline sm:text-lg min-h-[44px]"
+              >
+                {content.solution.link.text}
+              </Link>
+            </div>
+
+            <div className="order-2 lg:order-2">
               <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-secondary/10">
                 <img
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="Mental health support"
+                  src={content.solution.image.src || "/placeholder.svg"}
+                  alt={content.solution.image.alt}
                   className="h-full w-full object-cover"
                 />
               </div>
             </div>
-            <div className="order-1 space-y-4 sm:space-y-6 lg:order-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary sm:text-sm">Our Solution</p>
-              <h2 className="text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">La solución</h2>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                GoodHealth democratiza el acceso a la salud mental combinando inteligencia artificial avanzada con 
-                profesionales licenciados, ofreciendo apoyo inmediato, personalizado y accesible las 24 horas del día.
-              </p>
-              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Nuestra plataforma reduce barreras económicas y geográficas, proporcionando herramientas efectivas 
-                para el bienestar mental de todos.
-              </p>
-              <Link
-                href="#"
-                className="inline-flex items-center gap-2 text-base font-semibold text-secondary hover:underline sm:text-lg min-h-[44px]"
-              >
-                Learn more →
-              </Link>
-            </div>
+
           </div>
         </div>
       </section>
-
-      {/* Newsletter Section */}
-      <section className="px-4 py-12 sm:px-6 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-3 text-2xl font-bold text-foreground sm:mb-4 sm:text-3xl">Get offers</h2>
-          <p className="mb-6 text-sm text-muted-foreground sm:mb-8 sm:text-base">Get all the latest offers and updates from us</p>
-          <form className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <Input 
-              type="email" 
-              placeholder="Enter email here" 
-              className="flex-1 min-h-[44px] sm:min-h-[48px]" 
-            />
-            <Button className="bg-secondary text-white hover:bg-secondary/90 min-h-[44px] px-6 sm:min-h-[48px] sm:px-8">
-              Subscribe
-            </Button>
-          </form>
-        </div>
-      </section>
-
 
       <AppFooter />
 

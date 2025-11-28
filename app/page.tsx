@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
 export default function RootPage() {
-  // Automatically redirect to /home
+  // Server-side redirect to prevent blank page flash
   redirect('/home')
 }
