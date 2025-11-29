@@ -5,22 +5,25 @@
 
 :root {
   /* Light mode - Clean white background */
-  --background: oklch(0.98 0.001 70);
+  --background: oklch(100% 0.00011 271.152);
   --foreground: oklch(0.15 0.02 260);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.15 0.02 260);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 260);
+
   /* Updated primary to bright blue matching reference design */
-  --primary: oklch(0.52 0.285 260);
+  --primary: #1662C2;
   --primary-foreground: oklch(1 0 0);
+
   /* Updated secondary to green/turquoise accent */
-  --secondary: oklch(0.65 0.2 165);
+  --secondary:rgb(0,217,182);
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.75 0.02 260);
   --muted-foreground: oklch(0.45 0.02 260);
+  
   /* Updated accent to match green from reference */
-  --accent: oklch(0.65 0.2 165);
+  /* --accent: oklch(0.65 0.2 165);
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
@@ -40,7 +43,7 @@
   --sidebar-accent: oklch(0.65 0.2 165);
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.9 0.01 260);
-  --sidebar-ring: oklch(0.52 0.285 260);
+  --sidebar-ring: oklch(0.52 0.285 260); */
 }
 
 .dark {
@@ -56,7 +59,7 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.38 0 0);
   --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.52 0.3 262);
+  /*--accent: oklch(0.52 0.3 262);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.985 0 0);
@@ -75,7 +78,7 @@
   --sidebar-accent: oklch(0.22 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.22 0 0);
-  --sidebar-ring: oklch(0.52 0.3 262);
+  --sidebar-ring: oklch(0.52 0.3 262); */
 }
 
 @theme inline {
