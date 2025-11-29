@@ -52,7 +52,7 @@ export default function FAQPage() {
           </div>
 
           {/* Contact Support Section */}
-          <div className="bg-primary/5 p-8 rounded-lg text-center mt-12">
+          {/* <div className="bg-primary/5 p-8 rounded-lg text-center mt-12">
             <h2 className="text-2xl font-bold text-foreground mb-4">
               {content.support.title}
             </h2>
@@ -74,6 +74,7 @@ export default function FAQPage() {
               ))}
             </div>
           </div>
+           */}
         </div>
       </main>
 

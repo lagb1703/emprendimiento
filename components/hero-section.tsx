@@ -24,16 +24,16 @@ export function HeroSection() {
             </div>
             {/* Tagline */}
             <div className="space-y-6">
-              <p className="mx-auto text-xl font-semibold text-foreground sm:text-2xl md:text-3xl lg:mx-0 max-w-lg">
-                Bienestar mental en la palma de tu mano
+              <p className="mx-auto text-xl font-normal text-foreground sm:text-2xl md:text-3xl lg:mx-0 max-w-lg">
+                Apoyo clínico impulsada por inteligencia artificial que acompaña al psicólogo en tiempo real.
               </p>
               
               {/* CTA Buttons */}
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-semibold text-base">
+                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
                   Registrarse
                 </Button>
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-semibold text-base">
+                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
                   Iniciar sesión
                 </Button>
               </div>

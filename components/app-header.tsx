@@ -32,7 +32,7 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
             href="/about"
             className="text-sm font-medium text-background transition-colors hover:text-secondary"
           >
-            About Us
+            Nosotros
           </Link>
           <Link
             href="/faq"

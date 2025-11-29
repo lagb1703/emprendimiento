@@ -1,54 +1,54 @@
 export const faqContent = {
   hero: {
-    title: "Frequently Asked Questions",
-    description: "Find answers to the most common questions about GoodHealth",
+    title: "Preguntas frecuentes",
+    description: "Resolvemos las dudas más comunes sobre cómo GoodHealth potencia la práctica psicológica con inteligencia artificial.",
   },
 
   categories: [
     {
-      title: "General Questions",
+      title: "Sobre la Plataforma",
       questions: [
         {
-          question: "What is GoodHealth?",
-          answer: "GoodHealth is an AI-powered healthcare platform that provides intelligent health consultations, personalized care recommendations, and seamless communication between patients and healthcare providers."
+          question: "¿GoodHealth reemplaza al psicólogo?",
+          answer: "No. GoodHealth es un asistente clínico de IA que acompaña el análisis, no toma decisiones por el profesional."
         },
         {
-          question: "How does the AI chat system work?",
-          answer: "Our AI chat system uses advanced natural language processing to understand your health concerns and provide relevant information. It can help with symptom assessment, health education, and connecting you with appropriate healthcare resources."
+          question: "¿Cómo funciona el análisis en tiempo real?",
+          answer: "La IA analiza el lenguaje, el tono emocional y patrones del paciente durante la sesión, generando insights y resúmenes automáticos."
         },
         {
-          question: "Is my health data secure?",
-          answer: "Yes, we take data security very seriously. All health information is encrypted and stored securely according to healthcare data protection standards. We never share your personal health information without your explicit consent."
+          question: "¿Puedo usar GoodHealth si trabajo como independiente?",
+          answer: "Sí. El Plan Profesional está pensado específicamente para psicólogos independientes."
+        },
+        {
+          question: "¿Qué diferencia a GoodHealth de otras plataformas?",
+          answer: "Somos la única plataforma colombiana con IA en tiempo real, análisis emocional contextual, soporte en español y precios locales."
         }
       ]
     },
     {
-      title: "Account & Billing",
+      title: "Seguridad y Privacidad",
       questions: [
         {
-          question: "How do I create an account?",
-          answer: "You can create an account by clicking the \"Registrarse\" button in the header and filling out the registration form with your basic information. You'll receive a verification email to activate your account."
+          question: "¿La información de mis pacientes es segura?",
+          answer: "Sí. Usamos cifrado extremo a extremo, controles de acceso y prácticas alineadas con estándares internacionales."
         },
         {
-          question: "What are the pricing plans?",
-          answer: "We offer flexible pricing plans to suit different needs. Please visit our pricing page or contact our support team for detailed information about our current plans and features."
-        },
-        {
-          question: "Can I cancel my subscription anytime?",
-          answer: "Yes, you can cancel your subscription at any time from your account settings. Your access will continue until the end of your current billing period."
+          question: "¿La IA puede equivocarse?",
+          answer: "Sí, como toda herramienta tecnológica. Por eso GoodHealth nunca toma decisiones clínicas; solo ofrece apoyo analítico."
         }
       ]
     },
     {
-      title: "Technical Support",
+      title: "Soporte y Disponibilidad",
       questions: [
         {
-          question: "What browsers are supported?",
-          answer: "GoodHealth works best on modern browsers including Chrome, Firefox, Safari, and Edge. We recommend keeping your browser updated to the latest version for optimal performance."
+          question: "¿Puedo probar la plataforma antes de pagar?",
+          answer: "Sí. Contamos con un plan Freemium que permite conocer las funciones básicas."
         },
         {
-          question: "Is there a mobile app available?",
-          answer: "Currently, GoodHealth is available as a web application that works seamlessly on mobile browsers. We are working on dedicated mobile apps for iOS and Android, which will be available soon."
+          question: "¿Ofrecen soporte y acompañamiento?",
+          answer: "Sí. Brindamos soporte en español, capacitación inicial y acompañamiento para clínicas e instituciones."
         }
       ]
     }

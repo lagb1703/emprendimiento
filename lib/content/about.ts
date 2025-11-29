@@ -1,59 +1,69 @@
 export const aboutContent = {
   hero: {
-    title: "About GoodHealth",
-    description: "Empowering healthcare through innovative AI-powered solutions",
+    title: "Nosotros",
+    description: "GoodHealth, una plataforma web de apoyo clínico impulsada por inteligencia artificial que acompaña al psicólogo en tiempo real.",
   },
 
   mission: {
-    title: "Our Mission",
+    title: "Nuestra Misión",
     description: [
-      "At GoodHealth, we are committed to revolutionizing healthcare accessibility through cutting-edge artificial intelligence. Our platform provides intelligent health consultations, personalized care recommendations, and seamless communication between patients and healthcare providers."
+      "Convertirnos en la plataforma líder de apoyo clínico mediante inteligencia artificial en Latinoamérica, potenciando la práctica psicológica con herramientas que permitan ofrecer una atención más humana, precisa y accesible para todos. Queremos ser el puente entre tecnología avanzada y bienestar emocional, transformando la salud mental con innovación ética y empática."
     ],
   },
 
   vision: {
-    title: "Our Vision", 
+    title: "Nuestra Visión", 
     description: [
-      "We envision a world where quality healthcare is accessible to everyone, regardless of location or economic status. Through our AI-powered platform, we aim to bridge the gap between patients and healthcare professionals, making health consultations more efficient, affordable, and personalized."
+      "Desarrollar soluciones tecnológicas inteligentes que fortalezcan el trabajo de los psicólogos, optimicen sus procesos clínicos y mejoren la calidad de vida de pacientes y profesionales. Nuestro propósito es integrar ciencia, IA y experiencia terapéutica para brindar análisis en tiempo real, información basada en evidencia y herramientas que faciliten una práctica más eficiente, profunda y centrada en la persona."
     ],
   },
 
   values: {
-    title: "Our Values",
+    title: "Valores corporativos",
     cards: [
       {
-        title: "Innovation",
-        description: "We continuously push the boundaries of technology to create groundbreaking solutions in healthcare."
+        title: "Empatía",
+        description: "Colocamos al ser humano en el centro. La tecnología existe para apoyar al psicólogo y mejorar el bienestar de sus pacientes."
       },
       {
-        title: "Accessibility", 
-        description: "Healthcare should be available to everyone, and we work to eliminate barriers to quality medical care."
+        title: "Ética y responsabilidad", 
+        description: "Desarrollamos IA segura y transparente, protegemos la confidencialidad de la información y cumplimos estándares de privacidad rigurosos."
       },
       {
-        title: "Privacy",
-        description: "We prioritize the security and confidentiality of all patient data with the highest standards of protection."
+        title: "Humanización",
+        description: "La IA no reemplaza al terapeuta; lo acompaña. Nuestro propósito es amplificar su impacto, no automatizar su rol."
       },
       {
-        title: "Excellence",
-        description: "We strive for excellence in every aspect of our service, ensuring the best possible outcomes for our users."
+        title: "Accesibilidad",
+        description: "Tecnología de alto valor clínico, disponible en español y con precios justos para profesionales e instituciones de la región."
       }
     ],
   },
 
   team: {
-    title: "Our Team",
+    title: "Nuestro Equipo",
     description: [
-      "GoodHealth is built by a dedicated team of healthcare professionals, AI researchers, and software engineers who are passionate about improving global health outcomes through technology."
+      "GoodHealth está construido por un equipo con experiencia en estrategia, arquitectura de software e inteligencia artificial:"
     ],
-    placeholder: "More team information coming soon...",
-  },
-
-  contact: {
-    title: "Get in Touch",
-    description: "Have questions about GoodHealth? We'd love to hear from you.",
-    button: {
-      text: "Contact Us",
-      href: "#contact"
-    }
+    members: [
+      {
+        name: "Juan Camilo Galvis Agudelo",
+        role: "Director General y Estrategia",
+        description: "Responsable de la visión del producto, el crecimiento de la empresa y la articulación con el sector clínico.",
+        image: "/team-member-1.jpg"
+      },
+      {
+        name: "Luis Alejandro Giraldo  Bolaños",
+        role: "Líder de Desarrollo y Arquitectura de Software", 
+        description: "Encargado de la construcción técnica de la plataforma, escalabilidad, seguridad y experiencia de usuario.",
+        image: "/team-member-2.jpg"
+      },
+      {
+        name: "Stiven Castro Soto",
+        role: "Especialista en Inteligencia Artificial",
+        description: "Diseña los modelos de IA que permiten el análisis emocional, lingüístico y contextual dentro de las sesiones.", 
+        image: "/team-member-3.jpg"
+      }
+    ]
   }
 } as const

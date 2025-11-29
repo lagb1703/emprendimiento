@@ -68,24 +68,27 @@ export default function AboutPage() {
               </p>
             ))}
             
-            <div className="text-center">
-              <p className="text-muted-foreground">
-                {content.team.placeholder}
-              </p>
+            {/* Team Members Grid */}
+            <div className="grid md:grid-cols-3 gap-8 mt-12">
+              {content.team.members.map((member, index) => (
+                <div key={index} className="text-center">
+                  <div className="mb-4">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-primary/10"
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold text-foreground mb-2">{member.name}</h3>
+                  <p className="text-primary font-medium mb-3">{member.role}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{member.description}</p>
+                </div>
+              ))}
             </div>
           </section>
 
-          {/* Contact Section */}
-          <section className="bg-primary/5 p-8 rounded-lg text-center">
-            <h2 className="text-2xl font-bold text-foreground mb-4">{content.contact.title}</h2>
-            <p className="text-muted-foreground mb-6">
-              {content.contact.description}
-            </p>
-            <button className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">
-              {content.contact.button.text}
-            </button>
-          </section>
         </div>
+
       </main>
 
       <AppFooter />

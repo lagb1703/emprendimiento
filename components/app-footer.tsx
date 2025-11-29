@@ -28,7 +28,7 @@ export function AppFooter() {
             <ul className="space-y-2 text-sm text-white/70">
               <li>
                 <Link href="/about" className="hover:text-white transition-colors">
-                  About Us
+                  Nosotros
                 </Link>
               </li>
               <li>
