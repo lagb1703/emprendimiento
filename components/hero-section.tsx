@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -16,7 +17,7 @@ export function HeroSection() {
           <div className="relative space-y-8 text-center lg:text-left">
             {/* Good Health Logo Text */}
             <div className="flex justify-center lg:justify-start">
-              <img 
+              <img
                 className="h-auto max-w-full"
                 src="/BlueLogo.png"
                 alt="GoodHealth Logo"
@@ -27,15 +28,17 @@ export function HeroSection() {
               <p className="mx-auto text-xl font-normal text-foreground sm:text-2xl md:text-3xl lg:mx-0 max-w-lg">
                 Apoyo clínico impulsada por inteligencia artificial que acompaña al psicólogo en tiempo real.
               </p>
-              
-              {/* CTA Buttons */}
               <div className="flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
-                  Registrarse
-                </Button>
-                <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
-                  Iniciar sesión
-                </Button>
+                <Link href="/signup">
+                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
+                    Registrarse
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button size="lg" className="bg-secondary text-white hover:bg-secondary/90 min-h-[56px] px-10 rounded-full font-bold text-base">
+                    Iniciar sesión
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
