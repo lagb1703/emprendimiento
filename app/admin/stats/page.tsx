@@ -5,7 +5,8 @@ import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
 import { StatCard } from "@/components/stat-card"
 import { StatsSection } from "@/components/stats-section"
-import { Users, UserCheck, MessageSquare, TrendingUp, Settings } from "lucide-react"
+import { Users, MessageSquare, TrendingUp, Settings } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface Stats {
   totalUsers: number
@@ -26,7 +27,12 @@ interface Stats {
   }
 }
 
+type UserResponse = {
+  user: { [key: string]: any }
+}
+
 export default function AdminStatsPage() {
+  const router = useRouter()
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -44,8 +50,28 @@ export default function AdminStatsPage() {
         setLoading(false)
       }
     }
+    const ac = new AbortController()
 
+    async function fetchUser() {
+      try {
+        const res = await fetch('/api/auth/user', { signal: ac.signal })
+        console.log('Respuesta de /auth/user:', res)
+        if (!res.ok) {
+          router.push('/login')
+          return
+        }
+        const data: UserResponse = await res.json()
+        if (!data.user.isAdmin) {
+          router.push('/login')
+          return
+        }
+      } catch (err) {
+        if ((err as any).name === 'AbortError') return
+      }
+    }
     fetchStats()
+    fetchUser()
+    return () => ac.abort()
   }, [])
 
   if (loading) {

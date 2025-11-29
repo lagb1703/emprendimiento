@@ -3,14 +3,46 @@
 import { UserMenu } from "./user-menu"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface AppHeaderProps {
   showUserMenu?: boolean
 }
 
+type UserResponse = {
+  user: { [key: string]: any }
+}
+
 export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [isActive, setIsActive] = useState<boolean>(false)
+
+  useEffect(() => {
+    const ac = new AbortController()
+
+    async function fetchUser() {
+      try {
+        const res = await fetch('/api/auth/user', { signal: ac.signal })
+        console.log('Respuesta de /auth/user:', res)
+        if (!res.ok) {
+          setIsAdmin(false)
+          setIsActive(false)
+          return
+        }
+        setIsActive(true)
+        const data: UserResponse = await res.json()
+
+        console.log('Datos del usuario:', data)
+        setIsAdmin(data.user.isAdmin)
+      } catch (err) {
+        if ((err as any).name === 'AbortError') return
+      }
+    }
+
+    fetchUser()
+    return () => ac.abort()
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-primary">
@@ -18,10 +50,10 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-3 transition-transform hover:scale-105">
           <div className="flex items-center justify-center">
-            <img 
-              src="/fullWhiteLogo.png" 
-              alt="ChatHub Logo" 
-              className="h-8 brightness-100 contrast-100" 
+            <img
+              src="/fullWhiteLogo.png"
+              alt="ChatHub Logo"
+              className="h-8 brightness-100 contrast-100"
             />
           </div>
         </Link>
@@ -40,28 +72,45 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
           >
             FAQ
           </Link>
+          {isAdmin && (
+            <Link
+              href="/admin/stats"
+              className="text-sm font-medium text-background transition-colors hover:text-secondary"
+            >
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Desktop Auth Buttons / User Menu */}
         <div className="hidden items-center gap-3 md:flex">
-          {showUserMenu ? (
-            <UserMenu />
-          ) : (
-            <>
+          {
+            showUserMenu ? (
+              <UserMenu />
+            ) : isActive ? (
               <Link
-                href="/signup"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:text-secondary"
-              >
-                Registrarse
-              </Link>
-              <Link
-                href="/login"
+                href="/chats"
                 className="rounded-lg bg-primary-foreground px-4 py-2 text-sm font-medium text-foreground shadow transition-all hover:bg-secondary hover:shadow-md"
               >
-                Iniciar sesión
+                Chats
               </Link>
-            </>
-          )}
+            ) : (
+              <>
+                <Link
+                  href="/signup"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:text-secondary"
+                >
+                  Registrarse
+                </Link>
+                <Link
+                  href="/login"
+                  className="rounded-lg bg-primary-foreground px-4 py-2 text-sm font-medium text-foreground shadow transition-all hover:bg-secondary hover:shadow-md"
+                >
+                  Iniciar sesión
+                </Link>
+              </>
+            )
+          }
         </div>
 
         {/* Mobile Menu Button */}

@@ -154,7 +154,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
 export async function getUserById(id: string): Promise<User | null> {
   const result = await sql`
-    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at, "isPlus", plus_date
+    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at, "isPlus", plus_date, "isAdmin"
     FROM users
     WHERE id = ${id} AND deleted_at IS NULL
   `
@@ -194,7 +194,6 @@ export async function getAdminStats() {
 
     // Get monthly revenue
     const revenueResult = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed' AND created_at >= NOW() - INTERVAL '30 days'`
-    console.log("Revenue Result:", revenueResult)
     const monthlyRevenue = Number(revenueResult[0]?.total || 0)
 
     // Get active subscriptions
