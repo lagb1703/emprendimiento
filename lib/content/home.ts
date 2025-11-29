@@ -15,7 +15,7 @@ export const homeContent = {
       href: "/about",
     },
     image: {
-      src: "/placeholder.svg?height=400&width=600",
+      src: "/distressedIndividual.jpg?height=400&width=600",
       alt: "Mental health illustration",
     },
   },
@@ -91,7 +91,7 @@ export const homeContent = {
       href: "/faq",
     },
     image: {
-      src: "/placeholder.svg?height=400&width=600",
+      src: "/happyTherapy.jpg?height=400&width=600",
       alt: "Mental health support",
     },
   },
