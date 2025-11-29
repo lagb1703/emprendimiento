@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { addMessage, getMessages } from "@/lib/db"
-import { streamText } from "ai"
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 type Params = Promise<{ id: string }>
 
@@ -45,12 +46,17 @@ export async function POST(request: NextRequest, props: { params: Params }) {
         }))
 
         const result = streamText({
-          model: "openai/gpt-4-turbo",
+          model: openai('gpt-4.1'),
           messages: chatMessages,
           system:
             "Eres un asistente de IA amable y útil especializado en salud mental. Proporciona respuestas empáticas, informativas y basadas en evidencia.",
           temperature: 0.7,
           maxOutputTokens: 1024,
+          providerOptions: {
+            openai: {
+              apiKey: OPENAI_API_KEY,
+            },
+          },
         })
 
         return result.toUIMessageStreamResponse({

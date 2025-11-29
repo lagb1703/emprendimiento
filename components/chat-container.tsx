@@ -34,8 +34,8 @@ export function ChatContainer({ messages, isLoading, streamingText }: ChatContai
           </div>
         )}
 
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+        {messages.map((message, index) => (
+          <ChatMessage key={`${message.id}-${index}`} message={message} />
         ))}
 
         {streamingText && (
