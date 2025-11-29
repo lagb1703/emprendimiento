@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     const title = formData.get("title") as string
     const pdfFile = formData.get("pdfFile") as File | null
     const password = formData.get("password") as string
+    console.log("Received signup data:", { fullName, birthDate, email, username, title, pdfFile, password })
 
     // Validation
     if (!fullName || !birthDate || !email || !username || !title || !pdfFile || !password) {

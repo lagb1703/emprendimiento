@@ -104,7 +104,7 @@ export function LoginForm() {
 
       // Redirect to home after short delay
       setTimeout(() => {
-        router.push("/home")
+        router.push("/chats")
       }, 1500)
     } catch (error) {
       setErrors({

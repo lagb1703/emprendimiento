@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent, type ChangeEvent } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, ArrowLeft, AlertCircle, Loader2, Upload, Calendar } from "lucide-react"
+import { ArrowRight, ArrowLeft, AlertCircle, Loader2, Upload, Calendar, Eye, EyeOff } from "lucide-react"
 
 interface SignupFormData {
   // Stage 1: Personal Info
@@ -14,6 +14,7 @@ interface SignupFormData {
   // Stage 3: Professional
   title: string
   pdfFile: File | null
+  password: string
 }
 
 interface FormErrors {
@@ -30,9 +31,11 @@ export function SignupForm() {
     username: "",
     title: "",
     pdfFile: null,
+    password: "",
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
 
   const validateStage = (stage: number): boolean => {
@@ -65,6 +68,14 @@ export function SignupForm() {
       } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
         newErrors.username = "El nombre de usuario solo puede contener letras, números, guiones y guiones bajos"
       }
+      // Password validations
+      if (!formData.password) {
+        newErrors.password = "La contraseña es requerida"
+      } else if (formData.password.length < 8) {
+        newErrors.password = "La contraseña debe tener al menos 8 caracteres"
+      } else if (!/[0-9]/.test(formData.password)) {
+        newErrors.password = "La contraseña debe contener al menos un número"
+      }
     } else if (stage === 3) {
       if (!formData.title.trim()) {
         newErrors.title = "El título/grado es requerido"
@@ -90,10 +101,12 @@ export function SignupForm() {
       [name]: value,
     }))
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }))
+      setErrors((prev) => {
+        const next: FormErrors = { ...prev }
+        // remove the specific error key
+        delete (next as any)[name]
+        return next
+      })
     }
   }
 
@@ -104,10 +117,11 @@ export function SignupForm() {
       pdfFile: file,
     }))
     if (errors.pdfFile) {
-      setErrors((prev) => ({
-        ...prev,
-        pdfFile: undefined,
-      }))
+      setErrors((prev) => {
+        const next: FormErrors = { ...prev }
+        delete next.pdfFile
+        return next
+      })
     }
   }
 
@@ -140,6 +154,7 @@ export function SignupForm() {
       formDataToSend.append("email", formData.email)
       formDataToSend.append("username", formData.username)
       formDataToSend.append("title", formData.title)
+      formDataToSend.append("password", formData.password)
       if (formData.pdfFile) {
         formDataToSend.append("pdfFile", formData.pdfFile)
       }
@@ -167,7 +182,7 @@ export function SignupForm() {
 
       // Redirect to home after short delay
       setTimeout(() => {
-        router.push("/home")
+        router.push("/chats")
       }, 1500)
     } catch (error) {
       setErrors({
@@ -297,6 +312,39 @@ export function SignupForm() {
                   <div className="flex items-center gap-2 text-sm text-destructive mt-1">
                     <AlertCircle className="w-4 h-4" />
                     <span>{errors.username}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-sm font-medium text-foreground">
+                  Contraseña
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    placeholder="Al menos 8 caracteres"
+                    value={formData.password}
+                    onChange={handleTextChange}
+                    disabled={isLoading}
+                    className="w-full px-4 py-3 pr-10 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground placeholder-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    disabled={isLoading}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    className="absolute right-2 top-2 inline-flex items-center justify-center p-1 text-muted-foreground hover:text-foreground rounded"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <div className="flex items-center gap-2 text-sm text-destructive mt-1">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{errors.password}</span>
                   </div>
                 )}
               </div>

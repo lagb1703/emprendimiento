@@ -7,11 +7,10 @@ export async function GET(request: NextRequest, props: { params: Params }) {
   try {
     const params = await props.params
     const chat = await getChatById(params.id)
-
     if (!chat) {
       return NextResponse.json({ success: false, message: "Chat not found" }, { status: 404 })
     }
-
+    
     return NextResponse.json({ success: true, data: chat })
   } catch (error) {
     console.error("[v0] Get chat error:", error)

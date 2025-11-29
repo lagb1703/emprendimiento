@@ -32,6 +32,11 @@ export async function POST(request: NextRequest, props: { params: Params }) {
     // If it's a streaming AI request, generate response
     if (isStreaming && role === "assistant") {
       try {
+        const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+        if (!OPENAI_API_KEY) {
+          console.error("[v0] Missing OPENAI_API_KEY env var")
+          return NextResponse.json({ success: false, message: "Server misconfigured" }, { status: 500 })
+        }
         // Get chat history for context
         const messages = await getMessages(params.id)
         const chatMessages = messages.map((msg) => ({
@@ -48,7 +53,62 @@ export async function POST(request: NextRequest, props: { params: Params }) {
           maxOutputTokens: 1024,
         })
 
-        return result.toUIMessageStreamResponse()
+        return result.toUIMessageStreamResponse({
+          onFinish: async (finish) => {
+            try {
+              const extractText = (f: any): string | undefined => {
+                if (!f) return undefined
+
+                // direct text property
+                if (typeof f.text === 'string' && f.text.length) return f.text
+
+                // content array on the finish object
+                if (Array.isArray(f.content)) {
+                  return f.content
+                    .map((c: any) => (c && (c.type === 'text' || c.type === 'reasoning') ? c.text : ''))
+                    .join('')
+                }
+
+                // responseMessage shape (common for some UI helpers)
+                const resp = f.responseMessage ?? f.response ?? null
+                if (resp) {
+                  if (typeof resp.text === 'string' && resp.text.length) return resp.text
+                  if (Array.isArray(resp.content)) {
+                    return resp.content
+                      .map((c: any) => (c && (c.type === 'text' || c.type === 'reasoning') ? c.text : ''))
+                      .join('')
+                  }
+                }
+
+                // messages array: aggregate possible message contents
+                if (Array.isArray(f.messages)) {
+                  return f.messages
+                    .map((m: any) => {
+                      if (typeof m.text === 'string') return m.text
+                      if (Array.isArray(m.content)) {
+                        return m.content
+                          .map((c: any) => (c && (c.type === 'text' || c.type === 'reasoning') ? c.text : ''))
+                          .join('')
+                      }
+                      return ''
+                    })
+                    .join('')
+                }
+
+                return undefined
+              }
+
+              const generatedText = extractText(finish)
+
+              if (generatedText) {
+                // save assistant message to DB
+                await addMessage(params.id, 'assistant', generatedText, 'assistant')
+              }
+            } catch (saveErr) {
+              console.error('[v0] Error saving generated assistant message:', saveErr)
+            }
+          },
+        })
       } catch (streamError) {
         console.error("[v0] Streaming error:", streamError)
         return NextResponse.json({ success: false, message: "Streaming error" }, { status: 500 })

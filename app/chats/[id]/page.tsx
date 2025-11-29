@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams, useRouter } from "next/navigation"
 import type { Chat, Message } from "@/lib/db"
 import { ChatContainer } from "@/components/chat-container"
 import { ChatInput } from "@/components/chat-input"
@@ -9,12 +9,16 @@ import { useChat } from "@/hooks/use-chat"
 
 export default function ChatPage() {
   const params = useParams()
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const chatId = params.id as string
 
   const [chat, setChat] = useState<Chat | null>(null)
   const [allMessages, setAllMessages] = useState<Message[]>([])
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const { messages: streamMessages, isLoading, streamingText, sendMessage } = useChat(chatId)
+
+  const initialMessage = searchParams?.get("initialMessage") ?? null
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -50,6 +54,25 @@ export default function ChatPage() {
       setIsInitialLoading(false)
     }
   }, [chatId])
+
+  // If an initial message was passed via query param, send it once and remove the param
+  useEffect(() => {
+    if (!initialMessage) return
+    if (!chatId || chatId === "new") return
+
+    const sendInitial = async () => {
+      try {
+        await sendMessage(initialMessage)
+      } catch (error) {
+        console.error("[v0] Error sending initial message:", error)
+      } finally {
+        // Remove the query param so we don't resend on navigation
+        router.replace(`/chats/${chatId}`)
+      }
+    }
+
+    sendInitial()
+  }, [initialMessage, chatId, sendMessage, router])
 
   // Combine stored messages with streaming messages
   const displayMessages = [...allMessages, ...streamMessages]

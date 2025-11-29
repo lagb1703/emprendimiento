@@ -70,37 +70,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const sql = neon(process.env.NEON_NEON_DATABASE_URL!)
+    const sql = neon(process.env.NEON_DATABASE_URL!)
 
     // TODO: Get actual user_id from session/auth
     const userId = "temporary-user-id"
 
     // Store payment record in database
-    const result = await sql(
-      `INSERT INTO payments (
+    const result = await sql`
+      INSERT INTO payments (
         user_id, plan_name, amount, currency, status, payment_method,
         payer_name, payer_email, payer_phone, payer_document_type,
         payer_document_number, payer_address, payer_city, payer_postal_code
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
-      ) RETURNING id`,
-      [
-        userId,
-        body.planName,
-        body.amount,
-        "COP",
-        "pending",
-        body.paymentMethod,
-        body.fullName,
-        body.email,
-        body.phone,
-        body.documentType,
-        body.documentNumber,
-        body.address,
-        body.city,
-        body.postalCode,
-      ],
-    )
+        ${userId}, ${body.planName}, ${body.amount}, 'COP', 'pending', ${body.paymentMethod}, ${body.fullName}, ${body.email}, ${body.phone}, ${body.documentType}, ${body.documentNumber}, ${body.address}, ${body.city}, ${body.postalCode}
+      ) RETURNING id
+    `
 
     const paymentId = result[0]?.id
 
@@ -148,11 +132,7 @@ export async function POST(request: NextRequest) {
 
         if (wompy_response.ok && wompy_data.data?.id) {
           // Update payment with Wompy reference
-          await sql("UPDATE payments SET wompy_reference = $1, status = $2 WHERE id = $3", [
-            wompy_data.data.id,
-            "processing",
-            paymentId,
-          ])
+          await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
 
           return NextResponse.json({
             success: true,
@@ -166,7 +146,7 @@ export async function POST(request: NextRequest) {
       } catch (wompy_error) {
         console.error("Wompy API error:", wompy_error)
         // Still return payment created, but mark as failed
-        await sql("UPDATE payments SET status = $1 WHERE id = $2", ["failed", paymentId])
+        await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
         return NextResponse.json(
           { error: "Error al procesar la tarjeta. Por favor intenta de nuevo." },
           { status: 500 },
@@ -211,11 +191,7 @@ export async function POST(request: NextRequest) {
         const wompy_data = await wompy_response.json()
 
         if (wompy_response.ok && wompy_data.data?.id) {
-          await sql("UPDATE payments SET wompy_reference = $1, status = $2 WHERE id = $3", [
-            wompy_data.data.id,
-            "processing",
-            paymentId,
-          ])
+          await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
 
           return NextResponse.json({
             success: true,
@@ -228,7 +204,7 @@ export async function POST(request: NextRequest) {
         }
       } catch (pse_error) {
         console.error("PSE payment error:", pse_error)
-        await sql("UPDATE payments SET status = $1 WHERE id = $2", ["failed", paymentId])
+          await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
         return NextResponse.json(
           { error: "Error al procesar el pago PSE. Por favor intenta de nuevo." },
           { status: 500 },
