@@ -5,11 +5,13 @@ import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
 import { PaymentSummary } from "@/components/payment-summary"
 import { PaymentForm } from "@/components/payment-form"
+import { useRouter } from 'next/navigation'
 
 export default function PaymentPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -31,7 +33,10 @@ export default function PaymentPage() {
               <PaymentForm
                 isLoading={isLoading}
                 error={error}
-                onSuccess={() => setSuccess(true)}
+                onSuccess={() => { 
+                  setSuccess(true);
+                  router.push('/chats');
+                }}
                 onError={setError}
                 setIsLoading={setIsLoading}
               />

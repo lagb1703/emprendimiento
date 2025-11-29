@@ -52,7 +52,7 @@ export function ChatSidebar({ currentChatId }: { currentChatId?: string }) {
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
         <Link
-          href="/chats/new"
+          href="/chats"
           className="flex items-center gap-2 w-full px-4 py-3 rounded-lg bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 transition-colors font-medium"
         >
           <Plus className="w-5 h-5" />

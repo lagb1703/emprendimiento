@@ -18,29 +18,32 @@ export default function PlussBanner(){
 
     async function fetchUser() {
       try {
-        const res = await fetch('/auth/user', { signal: ac.signal })
+        const res = await fetch('/api/auth/user', { signal: ac.signal })
+        console.log('Respuesta de /auth/user:', res)
         if (!res.ok) {
           setIsPlus(false)
           return
         }
         const data: UserResponse = await res.json()
 
-        // Determinar si el usuario es "plus" según varias posibles formas en la respuesta
-        if (typeof data.isPlus === 'boolean') {
-          setIsPlus(data.isPlus)
-          return
-        }
-        if (typeof data.plan === 'string') {
-          setIsPlus(data.plan.toLowerCase() === 'plus')
-          return
-        }
-        if (Array.isArray(data.roles)) {
-          setIsPlus(data.roles.includes('plus'))
-          return
-        }
+        console.log('Datos del usuario:', data)
+        setIsPlus(data.user.isPlus)
 
-        // Por defecto, asumir que no es plus
-        setIsPlus(false)
+        // Determinar si el usuario es "plus" según varias posibles formas en la respuesta
+        // if (typeof data.user.isPlus === 'boolean') {
+        //   return
+        // }
+        // if (typeof data.plan === 'string') {
+        //   setIsPlus(data.plan.toLowerCase() === 'plus')
+        //   return
+        // }
+        // if (Array.isArray(data.roles)) {
+        //   setIsPlus(data.roles.includes('plus'))
+        //   return
+        // }
+
+        // // Por defecto, asumir que no es plus
+        // setIsPlus(false)
       } catch (err) {
         if ((err as any).name === 'AbortError') return
         setIsPlus(false)

@@ -1,5 +1,7 @@
 import { neon } from "@neondatabase/serverless"
 import { type NextRequest, NextResponse } from "next/server"
+import { getUserById } from "@/lib/db"
+import { verifyToken } from "@/lib/jwt"
 
 interface PaymentRequest {
   paymentMethod: "card" | "pse"
@@ -41,39 +43,47 @@ export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as PaymentRequest
 
-    if (body.paymentMethod === "card") {
-      if (!body.cardNumber || !body.cardName || !body.expiryDate || !body.cvv) {
-        return NextResponse.json({ error: "Datos de tarjeta incompletos" }, { status: 400 })
-      }
+    // if (body.paymentMethod === "card") {
+    //   if (!body.cardNumber || !body.cardName || !body.expiryDate || !body.cvv) {
+    //     return NextResponse.json({ error: "Datos de tarjeta incompletos" }, { status: 400 })
+    //   }
 
-      if (!validateCardNumber(body.cardNumber)) {
-        return NextResponse.json({ error: "Número de tarjeta inválido" }, { status: 400 })
-      }
+    //   if (!validateCardNumber(body.cardNumber)) {
+    //     return NextResponse.json({ error: "Número de tarjeta inválido" }, { status: 400 })
+    //   }
 
-      // Validate expiry date format
-      const [month, year] = body.expiryDate.split("/")
-      const now = new Date()
-      const currentYear = now.getFullYear() % 100
-      const currentMonth = now.getMonth() + 1
+    //   // Validate expiry date format
+    //   const [month, year] = body.expiryDate.split("/")
+    //   const now = new Date()
+    //   const currentYear = now.getFullYear() % 100
+    //   const currentMonth = now.getMonth() + 1
 
-      if (
-        !month ||
-        !year ||
-        Number.parseInt(year, 10) < currentYear ||
-        (Number.parseInt(year, 10) === currentYear && Number.parseInt(month, 10) < currentMonth)
-      ) {
-        return NextResponse.json({ error: "Tarjeta expirada o fecha inválida" }, { status: 400 })
-      }
+    //   if (
+    //     !month ||
+    //     !year ||
+    //     Number.parseInt(year, 10) < currentYear ||
+    //     (Number.parseInt(year, 10) === currentYear && Number.parseInt(month, 10) < currentMonth)
+    //   ) {
+    //     return NextResponse.json({ error: "Tarjeta expirada o fecha inválida" }, { status: 400 })
+    //   }
 
-      if (Number.parseInt(month, 10) < 1 || Number.parseInt(month, 10) > 12) {
-        return NextResponse.json({ error: "Mes de vencimiento inválido" }, { status: 400 })
-      }
-    }
+    //   if (Number.parseInt(month, 10) < 1 || Number.parseInt(month, 10) > 12) {
+    //     return NextResponse.json({ error: "Mes de vencimiento inválido" }, { status: 400 })
+    //   }
+    // }
 
     const sql = neon(process.env.NEON_DATABASE_URL!)
 
-    // TODO: Get actual user_id from session/auth
-    const userId = "temporary-user-id"
+    const payload = await verifyToken(request.cookies.get("authToken")?.value || "")
+    if (!payload) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    }
+    
+    const user = await getUserById(payload.id)
+    if (!user) {
+      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 })
+    }
+    const userId = user.id;
 
     // Store payment record in database
     const result = await sql`
@@ -84,6 +94,12 @@ export async function POST(request: NextRequest) {
       ) VALUES (
         ${userId}, ${body.planName}, ${body.amount}, 'COP', 'pending', ${body.paymentMethod}, ${body.fullName}, ${body.email}, ${body.phone}, ${body.documentType}, ${body.documentNumber}, ${body.address}, ${body.city}, ${body.postalCode}
       ) RETURNING id
+    `
+
+    const updateResult = await sql`
+      UPDATE users
+      SET "isPlus" = true, plus_date = NOW()
+      WHERE id = ${userId}
     `
 
     const paymentId = result[0]?.id
