@@ -1,5 +1,6 @@
 import { neon } from "@neondatabase/serverless"
 import { type NextRequest, NextResponse } from "next/server"
+import { verifyToken } from "@/lib/jwt"
 
 interface PaymentRequest {
   paymentMethod: "card" | "pse"
@@ -39,6 +40,20 @@ function validateCardNumber(cardNumber: string): boolean {
 
 export async function POST(request: NextRequest) {
   try {
+    // Get user_id from session/auth token
+    const token = request.cookies.get("authToken")?.value
+
+    if (!token) {
+      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
+    }
+
+    const payload = await verifyToken(token)
+
+    if (!payload) {
+      return NextResponse.json({ error: "Token inválido o expirado" }, { status: 401 })
+    }
+
+    const userId = payload.id
     const body = (await request.json()) as PaymentRequest
 
     if (body.paymentMethod === "card") {
@@ -71,9 +86,6 @@ export async function POST(request: NextRequest) {
     }
 
     const sql = neon(process.env.NEON_DATABASE_URL!)
-
-    // TODO: Get actual user_id from session/auth
-    const userId = "temporary-user-id"
 
     // Store payment record in database
     const result = await sql`
