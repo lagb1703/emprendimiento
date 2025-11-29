@@ -19,8 +19,8 @@ export function useChat(chatId: string) {
   const abortControllerRef = useRef<AbortController | null>(null)
 
   const sendMessage = useCallback(
-    async (content: string) => {
-      if (!chatId || !content.trim()) return
+    async (content: string, file?: File) => {
+      if (!chatId || (!content.trim() && !file)) return
 
       setIsLoading(true)
       setStreamingText("")
@@ -28,38 +28,34 @@ export function useChat(chatId: string) {
 
       try {
         // Step 1: Save user message first
+        const formData = new FormData()
+        formData.append("content", content)
+        formData.append("role", "user")
+        if (file) {
+          formData.append("file", file)
+        }
         const userMsgRes = await fetch(`/api/chats/${chatId}/messages`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-user-id": "test-user",
-          },
-          body: JSON.stringify({
-            content,
-            role: "user",
-          }),
+          body: formData,
           signal: abortControllerRef.current.signal,
         })
 
         if (!userMsgRes.ok) throw new Error("Failed to save user message")
 
         const userMsgData = await userMsgRes.json()
+        console.log("User message saved:", userMsgData)
         if (userMsgData.success) {
           setMessages((prev) => [...prev, userMsgData.data])
         }
 
         // Step 2: Get AI response with streaming
+        const formDataAI = new FormData()
+        formDataAI.append("content", "")
+        formDataAI.append("role", "assistant")
+        formDataAI.append("isStreaming", "true")
         const aiRes = await fetch(`/api/chats/${chatId}/messages`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-user-id": "test-user",
-          },
-          body: JSON.stringify({
-            content: "", // Empty - we'll collect from stream
-            role: "assistant",
-            isStreaming: true,
-          }),
+          body: formDataAI,
           signal: abortControllerRef.current.signal,
         })
 
@@ -101,16 +97,12 @@ export function useChat(chatId: string) {
 
         // Step 4: Save complete AI message
         if (fullText) {
+          const formedDataFinal = new FormData()
+          formedDataFinal.append("content", fullText)
+          formedDataFinal.append("role", "assistant")
           const aiMsgRes = await fetch(`/api/chats/${chatId}/messages`, {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-user-id": "test-user",
-            },
-            body: JSON.stringify({
-              content: fullText,
-              role: "assistant",
-            }),
+            body: formedDataFinal,
             signal: abortControllerRef.current.signal,
           })
 

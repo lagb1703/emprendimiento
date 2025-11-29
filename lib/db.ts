@@ -22,6 +22,17 @@ export type Message = {
   updated_at: Date
 }
 
+export type Attachment = {
+  id: string
+  chat_id: string
+  user_id: string
+  filename: string
+  mime: string
+  path: string
+  size: number
+  created_at: Date
+}
+
 // Chat operations
 export async function createChat(userId: string, title: string, description?: string): Promise<Chat> {
   const result = await sql`
@@ -85,6 +96,22 @@ export async function addMessage(
     RETURNING *
   `
   return result[0] as Message
+}
+
+export async function addAttachment(
+  chatId: string,
+  userId: string,
+  filename: string,
+  mime: string,
+  filePath: string,
+  size: number,
+): Promise<Attachment> {
+  const result = await sql`
+    INSERT INTO attachments (chat_id, user_id, filename, mime, path, size)
+    VALUES (${chatId}, ${userId}, ${filename}, ${mime}, ${filePath}, ${size})
+    RETURNING *
+  `
+  return result[0] as Attachment
 }
 
 export async function getMessages(chatId: string): Promise<Message[]> {
