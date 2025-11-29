@@ -47,7 +47,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<LoginResp
       )
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password_hash)
+    const isValidPassword = await bcrypt.compare(password, user.password_hash!)
 
     if (!isValidPassword) {
       return NextResponse.json(

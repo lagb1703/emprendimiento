@@ -106,7 +106,7 @@ export type User = {
   full_name: string
   email: string
   username: string
-  password_hash: string
+  password_hash?: string
   birth_date: string
   professional_title?: string
   pdf_url?: string
@@ -145,7 +145,7 @@ export async function createUser(
 
 export async function getUserByEmail(email: string): Promise<User | null> {
   const result = await sql`
-    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at
+    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at, "isPlus", plus_date
     FROM users
     WHERE (email = ${email.toLowerCase()} OR username = ${email.toLowerCase()}) AND deleted_at IS NULL
   `
@@ -154,7 +154,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
 export async function getUserById(id: string): Promise<User | null> {
   const result = await sql`
-    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at
+    SELECT id, full_name, email, username, password_hash, birth_date, professional_title, pdf_url, created_at, updated_at, "isPlus", plus_date
     FROM users
     WHERE id = ${id} AND deleted_at IS NULL
   `

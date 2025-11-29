@@ -88,129 +88,129 @@ export async function POST(request: NextRequest) {
 
     const paymentId = result[0]?.id
 
-    if (body.paymentMethod === "card") {
-      try {
-        const wompy_response = await fetch("https://api.wompy.com/v1/transactions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.WOMPY_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            reference: paymentId,
-            amount_in_cents: Math.round(body.amount * 100),
-            currency: "COP",
-            customer: {
-              phone_number: body.phone,
-              full_name: body.fullName,
-              legal_id: body.documentNumber,
-              legal_id_type: body.documentType,
-              email: body.email,
-            },
-            payment_method: {
-              type: "CARD",
-              card: {
-                number: body.cardNumber?.replace(/\s/g, ""),
-                name: body.cardName,
-                exp_month: body.expiryDate?.split("/")[0],
-                exp_year: body.expiryDate?.split("/")[1],
-                cvc: body.cvv,
-              },
-            },
-            shipping_address: {
-              address_line_1: body.address,
-              country: "CO",
-              region: body.city,
-              postal_code: body.postalCode,
-            },
-            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?paymentId=${paymentId}`,
-            webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payments/webhook`,
-          }),
-        })
+    // if (body.paymentMethod === "card") {
+    //   try {
+    //     const wompy_response = await fetch("https://api.wompy.com/v1/transactions", {
+    //       method: "POST",
+    //       headers: {
+    //         Authorization: `Bearer ${process.env.WOMPY_API_KEY}`,
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         reference: paymentId,
+    //         amount_in_cents: Math.round(body.amount * 100),
+    //         currency: "COP",
+    //         customer: {
+    //           phone_number: body.phone,
+    //           full_name: body.fullName,
+    //           legal_id: body.documentNumber,
+    //           legal_id_type: body.documentType,
+    //           email: body.email,
+    //         },
+    //         payment_method: {
+    //           type: "CARD",
+    //           card: {
+    //             number: body.cardNumber?.replace(/\s/g, ""),
+    //             name: body.cardName,
+    //             exp_month: body.expiryDate?.split("/")[0],
+    //             exp_year: body.expiryDate?.split("/")[1],
+    //             cvc: body.cvv,
+    //           },
+    //         },
+    //         shipping_address: {
+    //           address_line_1: body.address,
+    //           country: "CO",
+    //           region: body.city,
+    //           postal_code: body.postalCode,
+    //         },
+    //         redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?paymentId=${paymentId}`,
+    //         webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payments/webhook`,
+    //       }),
+    //     })
 
-        const wompy_data = await wompy_response.json()
+        // const wompy_data = await wompy_response.json()
 
-        if (wompy_response.ok && wompy_data.data?.id) {
-          // Update payment with Wompy reference
-          await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
+    //     if (wompy_response.ok && wompy_data.data?.id) {
+    //       // Update payment with Wompy reference
+    //       await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
 
-          return NextResponse.json({
-            success: true,
-            paymentId,
-            wompy_reference: wompy_data.data.id,
-            checkoutUrl: wompy_data.data.checkout_url,
-          })
-        } else {
-          throw new Error(wompy_data.error?.message || "Error en Wompy API")
-        }
-      } catch (wompy_error) {
-        console.error("Wompy API error:", wompy_error)
-        // Still return payment created, but mark as failed
-        await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
-        return NextResponse.json(
-          { error: "Error al procesar la tarjeta. Por favor intenta de nuevo." },
-          { status: 500 },
-        )
-      }
-    }
+    //       return NextResponse.json({
+    //         success: true,
+    //         paymentId,
+    //         wompy_reference: wompy_data.data.id,
+    //         checkoutUrl: wompy_data.data.checkout_url,
+    //       })
+    //     } else {
+    //       throw new Error(wompy_data.error?.message || "Error en Wompy API")
+    //     }
+    //   } catch (wompy_error) {
+    //     console.error("Wompy API error:", wompy_error)
+    //     // Still return payment created, but mark as failed
+    //     await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
+    //     return NextResponse.json(
+    //       { error: "Error al procesar la tarjeta. Por favor intenta de nuevo." },
+    //       { status: 500 },
+    //     )
+    //   }
+    // }
 
-    if (body.paymentMethod === "pse") {
-      try {
-        const wompy_response = await fetch("https://api.wompy.com/v1/transactions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.WOMPY_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            reference: paymentId,
-            amount_in_cents: Math.round(body.amount * 100),
-            currency: "COP",
-            customer: {
-              phone_number: body.phone,
-              full_name: body.fullName,
-              legal_id: body.documentNumber,
-              legal_id_type: body.documentType,
-              email: body.email,
-            },
-            payment_method: {
-              type: "PSE",
-              bank_code: body.bank,
-            },
-            shipping_address: {
-              address_line_1: body.address,
-              country: "CO",
-              region: body.city,
-              postal_code: body.postalCode,
-            },
-            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?paymentId=${paymentId}`,
-            webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payments/webhook`,
-          }),
-        })
+    // if (body.paymentMethod === "pse") {
+    //   try {
+    //     const wompy_response = await fetch("https://api.wompy.com/v1/transactions", {
+    //       method: "POST",
+    //       headers: {
+    //         Authorization: `Bearer ${process.env.WOMPY_API_KEY}`,
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         reference: paymentId,
+    //         amount_in_cents: Math.round(body.amount * 100),
+    //         currency: "COP",
+    //         customer: {
+    //           phone_number: body.phone,
+    //           full_name: body.fullName,
+    //           legal_id: body.documentNumber,
+    //           legal_id_type: body.documentType,
+    //           email: body.email,
+    //         },
+    //         payment_method: {
+    //           type: "PSE",
+    //           bank_code: body.bank,
+    //         },
+    //         shipping_address: {
+    //           address_line_1: body.address,
+    //           country: "CO",
+    //           region: body.city,
+    //           postal_code: body.postalCode,
+    //         },
+    //         redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?paymentId=${paymentId}`,
+    //         webhook_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/payments/webhook`,
+    //       }),
+    //     })
 
-        const wompy_data = await wompy_response.json()
+    //     const wompy_data = await wompy_response.json()
 
-        if (wompy_response.ok && wompy_data.data?.id) {
-          await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
+    //     if (wompy_response.ok && wompy_data.data?.id) {
+    //       await sql`UPDATE payments SET wompy_reference = ${wompy_data.data.id}, status = ${"processing"} WHERE id = ${paymentId}`
 
-          return NextResponse.json({
-            success: true,
-            paymentId,
-            wompy_reference: wompy_data.data.id,
-            checkoutUrl: wompy_data.data.checkout_url,
-          })
-        } else {
-          throw new Error(wompy_data.error?.message || "Error en Wompy API")
-        }
-      } catch (pse_error) {
-        console.error("PSE payment error:", pse_error)
-          await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
-        return NextResponse.json(
-          { error: "Error al procesar el pago PSE. Por favor intenta de nuevo." },
-          { status: 500 },
-        )
-      }
-    }
+    //       return NextResponse.json({
+    //         success: true,
+    //         paymentId,
+    //         wompy_reference: wompy_data.data.id,
+    //         checkoutUrl: wompy_data.data.checkout_url,
+    //       })
+    //     } else {
+    //       throw new Error(wompy_data.error?.message || "Error en Wompy API")
+    //     }
+    //   } catch (pse_error) {
+    //     console.error("PSE payment error:", pse_error)
+    //       await sql`UPDATE payments SET status = ${"failed"} WHERE id = ${paymentId}`
+    //     return NextResponse.json(
+    //       { error: "Error al procesar el pago PSE. Por favor intenta de nuevo." },
+    //       { status: 500 },
+    //     )
+    //   }
+    // }
 
     return NextResponse.json({
       success: true,
