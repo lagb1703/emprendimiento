@@ -50,19 +50,19 @@ export const aboutContent = {
         name: "Juan Camilo Galvis Agudelo",
         role: "Director General y Estrategia",
         description: "Responsable de la visión del producto, el crecimiento de la empresa y la articulación con el sector clínico.",
-        image: "/team-member-1.jpg"
+        image: "/fotoGalvis.png"
       },
       {
         name: "Luis Alejandro Giraldo  Bolaños",
         role: "Líder de Desarrollo y Arquitectura de Software", 
         description: "Encargado de la construcción técnica de la plataforma, escalabilidad, seguridad y experiencia de usuario.",
-        image: "/team-member-2.jpg"
+        image: "/fotoLuis.png"
       },
       {
         name: "Stiven Castro Soto",
         role: "Especialista en Inteligencia Artificial",
         description: "Diseña los modelos de IA que permiten el análisis emocional, lingüístico y contextual dentro de las sesiones.", 
-        image: "/team-member-3.jpg"
+        image: "/fotoStiven.png"
       }
     ]
   }
