@@ -88,17 +88,6 @@ export async function POST(request: NextRequest) {
 
     const sql = neon(process.env.NEON_DATABASE_URL!)
 
-    const payload = await verifyToken(request.cookies.get("authToken")?.value || "")
-    if (!payload) {
-      return NextResponse.json({ error: "No autenticado" }, { status: 401 })
-    }
-    
-    const user = await getUserById(payload.id)
-    if (!user) {
-      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 })
-    }
-    const userId = user.id;
-
     // Store payment record in database
     const result = await sql`
       INSERT INTO payments (
