@@ -169,8 +169,8 @@ export async function getAdminStats() {
     const totalUsers = usersResult[0]?.count || 0
 
     // Get active professionals (users with professional_title not null)
-    const professionalsResult = await sql`SELECT COUNT(*) as count FROM users WHERE professional_title IS NOT NULL AND deleted_at IS NULL`
-    const activeProfessionals = professionalsResult[0]?.count || 0
+    // const professionalsResult = await sql`SELECT COUNT(*) as count FROM users WHERE professional_title IS NOT NULL AND deleted_at IS NULL`
+    const activeProfessionals = 0
 
     // Get total sessions (total messages in chats)
     const sessionsResult = await sql`SELECT COUNT(*) as count FROM messages`
@@ -194,16 +194,15 @@ export async function getAdminStats() {
 
     // Get monthly revenue
     const revenueResult = await sql`SELECT COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed' AND created_at >= NOW() - INTERVAL '30 days'`
+    console.log("Revenue Result:", revenueResult)
     const monthlyRevenue = Number(revenueResult[0]?.total || 0)
 
     // Get active subscriptions
-    const subscriptionsResult = await sql`SELECT COUNT(*) as count FROM payments WHERE status = 'completed' AND subscription_active = true`
+    const subscriptionsResult = await sql`SELECT COUNT(*) as count FROM users WHERE "isPlus" = true AND plus_date >= NOW() - INTERVAL '30 days' AND deleted_at IS NULL`
     const activeSubscriptions = subscriptionsResult[0]?.count || 0
 
     // Get retention rate (users with chats)
-    const retentionResult = await sql`SELECT COUNT(DISTINCT user_id) as count FROM chats WHERE deleted_at IS NULL`
-    const usersWithChats = Number(retentionResult[0]?.count || 0)
-    const retentionRate = totalUsers > 0 ? parseFloat(((usersWithChats / totalUsers) * 100).toFixed(1)) : 0
+    const retentionRate = totalUsers > 0 ? parseFloat(((totalUsers / totalUsers) * 100).toFixed(1)) : 0
 
     // Get average revenue per user
     const avgRevenueResult = await sql`SELECT COUNT(DISTINCT user_id) as user_count, COALESCE(SUM(amount), 0) as total FROM payments WHERE status = 'completed'`

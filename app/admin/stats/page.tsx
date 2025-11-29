@@ -97,12 +97,7 @@ export default function AdminStatsPage() {
             value={stats.totalUsers.toLocaleString()}
             subtitle="+12% desde el mes pasado"
           />
-          <StatCard
-            icon={<UserCheck className="w-6 h-6" />}
-            title="Profesionales Activos"
-            value={stats.activeProfessionals}
-            subtitle="+3 nuevos esta semana"
-          />
+          <div className="w-6 h-6"></div>
           <StatCard
             icon={<MessageSquare className="w-6 h-6" />}
             title="Sesiones Totales"

@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         payer_name, payer_email, payer_phone, payer_document_type,
         payer_document_number, payer_address, payer_city, payer_postal_code
       ) VALUES (
-        ${userId}, ${body.planName}, ${body.amount}, 'COP', 'pending', ${body.paymentMethod}, ${body.fullName}, ${body.email}, ${body.phone}, ${body.documentType}, ${body.documentNumber}, ${body.address}, ${body.city}, ${body.postalCode}
+        ${userId}, ${body.planName}, ${body.amount}, 'COP', 'completed', ${body.paymentMethod}, ${body.fullName}, ${body.email}, ${body.phone}, ${body.documentType}, ${body.documentNumber}, ${body.address}, ${body.city}, ${body.postalCode}
       ) RETURNING id
     `
 

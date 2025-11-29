@@ -35,7 +35,7 @@ export default function PaymentPage() {
                 error={error}
                 onSuccess={() => { 
                   setSuccess(true);
-                  router.push('/chats');
+                  setTimeout(() => { router.push('/chats') }, 3000);
                 }}
                 onError={setError}
                 setIsLoading={setIsLoading}
