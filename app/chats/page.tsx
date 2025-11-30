@@ -3,11 +3,17 @@
 import { useRouter } from "next/navigation"
 import { ChatContainer } from "@/components/chat-container"
 import { ChatInput } from "@/components/chat-input"
+import { useChat } from "@/hooks/use-chat"
+import { useState, useCallback, useEffect } from "react"
 
 export default function ChatPage() {
+  const [chatId, setChatId] = useState<string>("")
+  const [messages, setMessages] = useState("")
   const router = useRouter()
 
-  const createAndOpenChat = async (message: string) => {
+  const { sendMessage } = useChat(chatId)
+
+  const createAndOpenChat = useCallback(async (message: string) => {
     if (!message.trim()) return
 
     const title = message.trim().slice(0, 100)
@@ -17,7 +23,6 @@ export default function ChatPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-user-id": "test-user",
         },
         body: JSON.stringify({ title }),
       })
@@ -27,13 +32,35 @@ export default function ChatPage() {
       const data = await res.json()
       if (data.success && data.data?.id) {
         const chatId = data.data.id
-        // Navigate to the new chat and pass the initial message as a query param
-        router.push(`/chats/${chatId}?initialMessage=${encodeURIComponent(message)}`)
+        setChatId(chatId)
+        setMessages(message);
       }
     } catch (error) {
       console.error("[v0] Error creating chat:", error)
     }
-  }
+  }, [router, setChatId])
+
+  useEffect(() => {
+    if (chatId) {
+      sendMessage(messages);
+      console.log("Sending message to chat:", chatId, messages);
+      const timer = setTimeout(() => {
+        ;(async () => {
+          try {
+            router.push(`/chats/${chatId}`)
+          } catch (e) {
+            console.warn('[v0] router.push failed:', e)
+          }
+          try {
+            router.refresh()
+          } catch (e) {
+            console.warn('[v0] router.refresh failed:', e)
+          }
+        })()
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [chatId, sendMessage, messages])
 
   return (
     <div className="flex-1 flex flex-col">

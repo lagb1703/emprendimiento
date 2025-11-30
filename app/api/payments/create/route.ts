@@ -1,6 +1,5 @@
 import { neon } from "@neondatabase/serverless"
 import { type NextRequest, NextResponse } from "next/server"
-import { getUserById } from "@/lib/db"
 import { verifyToken } from "@/lib/jwt"
 
 interface PaymentRequest {

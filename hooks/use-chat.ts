@@ -43,7 +43,6 @@ export function useChat(chatId: string) {
         if (!userMsgRes.ok) throw new Error("Failed to save user message")
 
         const userMsgData = await userMsgRes.json()
-        console.log("User message saved:", userMsgData)
         if (userMsgData.success) {
           setMessages((prev) => [...prev, userMsgData.data])
         }

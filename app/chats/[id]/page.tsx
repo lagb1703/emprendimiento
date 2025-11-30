@@ -57,22 +57,11 @@ export default function ChatPage() {
 
   // If an initial message was passed via query param, send it once and remove the param
   useEffect(() => {
-    if (!initialMessage) return
-    if (!chatId || chatId === "new") return
-
-    const sendInitial = async () => {
-      try {
-        await sendMessage(initialMessage)
-      } catch (error) {
-        console.error("[v0] Error sending initial message:", error)
-      } finally {
-        // Remove the query param so we don't resend on navigation
-        router.replace(`/chats/${chatId}`)
-      }
-    }
-
-    sendInitial()
-  }, [initialMessage, chatId, sendMessage, router])
+    const timer = setTimeout(() => {
+      router.refresh()
+    }, 1500);
+    return () => clearTimeout(timer)
+  }, [])
 
   // Combine stored messages with streaming messages
   const displayMessages = [...allMessages, ...streamMessages]
