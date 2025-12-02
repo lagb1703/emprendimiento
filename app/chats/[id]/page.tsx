@@ -68,7 +68,7 @@ export default function ChatPage() {
 
   if (chatId === "new") {
     return (
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-col h-full">
         <ChatContainer messages={[]} />
         <ChatInput onSendMessage={async () => {}} disabled={true} />
       </div>

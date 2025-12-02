@@ -62,7 +62,7 @@ export default function ChatPage() {
   }, [chatId, sendMessage, messages])
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex flex-col h-full">
       <ChatContainer messages={[]} streamingText={""} isLoading={false} />
       <ChatInput onSendMessage={createAndOpenChat} disabled={false} />
     </div>
