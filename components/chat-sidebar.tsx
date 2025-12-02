@@ -2,15 +2,44 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Plus, Search, Trash2, MessageSquare } from "lucide-react"
 import type { Chat } from "@/lib/db"
 
-export function ChatSidebar({ currentChatId }: { currentChatId?: string }) {
+export function ChatSidebar({
+  currentChatId,
+  overlay = false,
+  overrideWidth,
+}: {
+  currentChatId?: string
+  overlay?: boolean
+  overrideWidth?: number
+}) {
   const [chats, setChats] = useState<Chat[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
+
+  // Estado y refs para redimensionamiento
+  const [width, setWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return 256
+    try {
+      const stored = localStorage.getItem("chatSidebarWidth")
+      return stored ? Number(stored) : 256
+    } catch (e) {
+      return 256
+    }
+  })
+
+  const sidebarRef = useRef<HTMLDivElement | null>(null)
+  const isDraggingRef = useRef(false)
+  const startXRef = useRef(0)
+  const startWidthRef = useRef(0)
+  const mouseMoveRef = useRef<(e: MouseEvent) => void | null>(null)
+  const touchMoveRef = useRef<(e: TouchEvent) => void | null>(null)
+  const mouseUpRef = useRef<() => void | null>(null)
+  const MIN_WIDTH = 220
+  const MAX_WIDTH = 520
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -32,6 +61,18 @@ export function ChatSidebar({ currentChatId }: { currentChatId?: string }) {
     fetchChats()
   }, [])
 
+  // Persistir ancho cuando cambie (no durante el arrastre)
+  useEffect(() => {
+    if (overlay) return
+    if (!isDraggingRef.current) {
+      try {
+        localStorage.setItem("chatSidebarWidth", String(width))
+      } catch (e) {
+        /* ignore */
+      }
+    }
+  }, [width, overlay])
+
   const filteredChats = chats.filter((chat) => chat.title.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const handleDeleteChat = async (chatId: string, e: React.MouseEvent) => {
@@ -47,8 +88,66 @@ export function ChatSidebar({ currentChatId }: { currentChatId?: string }) {
     }
   }
 
+  // Funciones para iniciar / detener arrastre
+  const onPointerMove = (clientX: number) => {
+    if (!isDraggingRef.current) return
+    const delta = clientX - startXRef.current
+    const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, startWidthRef.current + delta))
+    setWidth(newWidth)
+  }
+
+  const stopDragging = () => {
+    if (!isDraggingRef.current) return
+    isDraggingRef.current = false
+
+    if (mouseMoveRef.current) window.removeEventListener("mousemove", mouseMoveRef.current)
+    if (mouseUpRef.current) window.removeEventListener("mouseup", mouseUpRef.current)
+    if (touchMoveRef.current) window.removeEventListener("touchmove", touchMoveRef.current)
+    window.removeEventListener("touchend", stopDragging)
+
+    try {
+      localStorage.setItem("chatSidebarWidth", String(width))
+    } catch (e) {
+      /* ignore */
+    }
+  }
+
+  const startDraggingMouse = (e: React.MouseEvent) => {
+    e.preventDefault()
+    isDraggingRef.current = true
+    startXRef.current = e.clientX
+    startWidthRef.current = width
+
+    const mm = (ev: MouseEvent) => onPointerMove(ev.clientX)
+    const mu = () => stopDragging()
+
+    mouseMoveRef.current = mm
+    mouseUpRef.current = mu
+
+    window.addEventListener("mousemove", mm)
+    window.addEventListener("mouseup", mu)
+  }
+
+  const startDraggingTouch = (e: React.TouchEvent) => {
+    isDraggingRef.current = true
+    startXRef.current = e.touches[0].clientX
+    startWidthRef.current = width
+
+    const tm = (ev: TouchEvent) => onPointerMove(ev.touches[0].clientX)
+    touchMoveRef.current = tm
+
+    window.addEventListener("touchmove", tm)
+    window.addEventListener("touchend", stopDragging)
+  }
+
+  const appliedWidth = overlay ? overrideWidth ?? width : width
+
   return (
-    <aside className="w-64 bg-sidebar border-r border-sidebar-border flex flex-col h-screen sticky top-0">
+    <aside
+      ref={sidebarRef}
+      style={{ width: appliedWidth }}
+      className="bg-sidebar border-r border-sidebar-border flex flex-col h-screen sticky top-0 relative"
+    >
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
         <Link

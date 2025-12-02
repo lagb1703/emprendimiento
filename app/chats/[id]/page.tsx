@@ -59,7 +59,7 @@ export default function ChatPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.refresh()
-    }, 1500);
+    }, 3500);
     return () => clearTimeout(timer)
   }, [])
 
@@ -76,7 +76,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex flex-col h-full">
       <ChatContainer messages={displayMessages} streamingText={streamingText} isLoading={isLoading} />
       <ChatInput onSendMessage={sendMessage} disabled={isInitialLoading} />
     </div>
