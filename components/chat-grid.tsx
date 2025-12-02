@@ -42,14 +42,10 @@ const mockChats = [
 export function ChatGrid() {
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.preventDefault()
-    // TODO: Delete chat from MongoDB
-    console.log("Delete chat:", id)
   }
 
   const handleShare = (id: string, e: React.MouseEvent) => {
     e.preventDefault()
-    // TODO: Share chat
-    console.log("Share chat:", id)
   }
 
   if (mockChats.length === 0) {

@@ -55,7 +55,6 @@ export default function AdminStatsPage() {
     async function fetchUser() {
       try {
         const res = await fetch('/api/auth/user', { signal: ac.signal })
-        console.log('Respuesta de /auth/user:', res)
         if (!res.ok) {
           router.push('/login')
           return

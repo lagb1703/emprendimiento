@@ -19,14 +19,11 @@ export default function PlussBanner(){
     async function fetchUser() {
       try {
         const res = await fetch('/api/auth/user', { signal: ac.signal })
-        console.log('Respuesta de /auth/user:', res)
         if (!res.ok) {
           setIsPlus(false)
           return
         }
         const data: UserResponse = await res.json()
-
-        console.log('Datos del usuario:', data)
         setIsPlus(data.user.isPlus)
 
         // Determinar si el usuario es "plus" según varias posibles formas en la respuesta

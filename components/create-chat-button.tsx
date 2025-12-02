@@ -9,8 +9,6 @@ interface CreateChatButtonProps {
 
 export function CreateChatButton({ variant = "primary" }: CreateChatButtonProps) {
   const handleCreateChat = () => {
-    // TODO: Navigate to new chat or open create dialog
-    console.log("Create new chat")
   }
 
   if (variant === "sidebar") {

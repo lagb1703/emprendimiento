@@ -33,7 +33,6 @@ export async function GET(request: NextRequest, props: { params: Params }) {
 
 export async function POST(request: NextRequest, props: { params: Params }) {
   try {
-    console.log('[v0] Received add message request')
     const params = await props.params
     const token = request.cookies.get("authToken")?.value
     if (!token) {
@@ -73,7 +72,6 @@ export async function POST(request: NextRequest, props: { params: Params }) {
     if (fileEntry && typeof (fileEntry as any).arrayBuffer === 'function') {
       const f: File = fileEntry as any
       const { dest, buf, extracted } = await saveFormFile(f)
-      console.log(`${extracted}`)
       if (extracted && extracted.trim().length) {
         extractedTextFromFile = extracted
       } else if ((f.type || '').startsWith('text/') || f.name.endsWith('.txt') || f.type === 'application/json') {

@@ -24,7 +24,6 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
     async function fetchUser() {
       try {
         const res = await fetch('/api/auth/user', { signal: ac.signal })
-        console.log('Respuesta de /auth/user:', res)
         if (!res.ok) {
           setIsAdmin(false)
           setIsActive(false)
@@ -32,8 +31,6 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
         }
         setIsActive(true)
         const data: UserResponse = await res.json()
-
-        console.log('Datos del usuario:', data)
         setIsAdmin(data.user.isAdmin)
       } catch (err) {
         if ((err as any).name === 'AbortError') return

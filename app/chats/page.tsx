@@ -43,7 +43,6 @@ export default function ChatPage() {
   useEffect(() => {
     if (chatId) {
       sendMessage(messages);
-      console.log("Sending message to chat:", chatId, messages);
       const timer = setTimeout(() => {
         ;(async () => {
           try {
