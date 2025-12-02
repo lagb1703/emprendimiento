@@ -43,21 +43,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (chatId) {
       sendMessage(messages);
-      const timer = setTimeout(() => {
-        ;(async () => {
-          try {
-            router.push(`/chats/${chatId}`)
-          } catch (e) {
-            console.warn('[v0] router.push failed:', e)
-          }
-          try {
-            router.refresh()
-          } catch (e) {
-            console.warn('[v0] router.refresh failed:', e)
-          }
-        })()
-      }, 3000)
-      return () => clearTimeout(timer)
+      router.push(`/chats/${chatId}`)
     }
   }, [chatId, sendMessage, messages])
 

@@ -17,8 +17,7 @@ export default function ChatPage() {
   const [allMessages, setAllMessages] = useState<Message[]>([])
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const { messages: streamMessages, isLoading, streamingText, sendMessage } = useChat(chatId)
-
-  const initialMessage = searchParams?.get("initialMessage") ?? null
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -47,33 +46,24 @@ export default function ChatPage() {
         setIsInitialLoading(false)
       }
     }
-
-    if (chatId && chatId !== "new") {
-      fetchChat()
-    } else {
-      setIsInitialLoading(false)
+    fetchChat();
+    const assistantMessage = allMessages.find(msg => msg.role === 'assistant');
+    if(!assistantMessage) {
+      setRefresh(false);
     }
-  }, [chatId])
+  }, [chatId, refresh])
 
   // If an initial message was passed via query param, send it once and remove the param
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.refresh()
-    }, 3500);
+      if (refresh) return;
+      console.log("Sending initial message from query param");
+      setRefresh(true);
+    }, 1000);
     return () => clearTimeout(timer)
-  }, [])
+  }, [refresh])
 
-  // Combine stored messages with streaming messages
   const displayMessages = [...allMessages, ...streamMessages]
-
-  if (chatId === "new") {
-    return (
-      <div className="flex flex-col h-full">
-        <ChatContainer messages={[]} />
-        <ChatInput onSendMessage={async () => {}} disabled={true} />
-      </div>
-    )
-  }
 
   return (
     <div className="flex flex-col h-full">
