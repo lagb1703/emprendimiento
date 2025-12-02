@@ -121,7 +121,7 @@ export default function Bot() {
         setTimeout(() => {
             if (webSocket.current)
                 webSocket.current.send(JSON.stringify(event));
-        }, 1500);
+        }, 3000);
         webSocket.current.onopen = () => {
             console.log("Connected to server.");
             // Start capturing and sending audio when socket opens
