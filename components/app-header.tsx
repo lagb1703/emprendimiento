@@ -16,6 +16,7 @@ type UserResponse = {
 export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  const [isPluss, setIsPluss] = useState<boolean | null>(null)
   const [isActive, setIsActive] = useState<boolean>(false)
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
         setIsActive(true)
         const data: UserResponse = await res.json()
         setIsAdmin(data.user.isAdmin)
+        setIsPluss(data.user.isPlus)
       } catch (err) {
         if ((err as any).name === 'AbortError') return
       }
@@ -69,6 +71,14 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
           >
             FAQ
           </Link>
+          {isPluss && (
+            <Link
+              href="/bot"
+              className="text-sm font-medium text-background transition-colors hover:text-secondary"
+            >
+              Asistente
+            </Link>
+          )}
           {isAdmin && (
             <Link
               href="/admin/stats"
@@ -138,6 +148,15 @@ export function AppHeader({ showUserMenu = false }: AppHeaderProps) {
             >
               FAQ
             </Link>
+            {isPluss && (
+              <Link
+                href="/bot"
+                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Asistente
+              </Link>
+            )}
             <div className="mt-4 flex flex-col gap-2 border-t border-border/40 pt-4">
               {showUserMenu ? (
                 <div className="px-3">

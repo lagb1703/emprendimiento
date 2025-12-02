@@ -2,6 +2,7 @@
 import { AppHeader } from "@/components/app-header"
 import { AppFooter } from "@/components/app-footer"
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from "next/navigation"
 
 const event = {
     type: "session.update",
@@ -43,15 +44,69 @@ const event = {
     },
 };
 
+type UserResponse = {
+    user: { [key: string]: any }
+}
+
 export default function Bot() {
+    const router = useRouter()
     const [running, setRunning] = useState(false);
-    const [logs, setLogs] = useState<string[]>([]);
     const webSocket = useRef<WebSocket | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
     const audioCtxRef = useRef<AudioContext | null>(null);
     const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
     const processorRef = useRef<ScriptProcessorNode | null>(null);
     const audioChunksRef = useRef<Map<string, Uint8Array[]>>(new Map());
+
+    useEffect(() => {
+        const ac = new AbortController()
+        async function fetchUser() {
+            try {
+                const res = await fetch('/api/auth/user', { signal: ac.signal })
+                if (!res.ok) {
+                    router.push('/login')
+                    return
+                }
+                const data: UserResponse = await res.json()
+                if (!data.user.isPlus) {
+                    router.push('/login')
+                    return
+                }
+            } catch (err) {
+                if ((err as any).name === 'AbortError') return
+            }
+        }
+        fetchUser()
+        return () => ac.abort()
+    }, []);
+
+    const BotStatus = ({ running, model }: { running: boolean; model: string }) => {
+        return (
+            <div className="flex items-center justify-between gap-4 p-3 rounded-lg border border-gray-700 bg-gradient-to-r from-slate-800 to-slate-900 text-white" aria-live="polite">
+                <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${running ? 'bg-green-500' : 'bg-gray-600'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V6a4 4 0 118 0v1m-9 8h10a2 2 0 012 2v1a1 1 0 01-1 1H6a1 1 0 01-1-1v-1a2 2 0 012-2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 14v.01M15 14v.01" />
+                        </svg>
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-sm font-semibold">{running ? 'Bot activo' : 'Bot inactivo'}</span>
+                        <span className="text-xs text-gray-300">Modelo: <span className="font-mono text-xs">{model}</span></span>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex flex-col text-right">
+                        <span className="text-xs text-gray-300">Estado de la sesión</span>
+                        <span className={`text-sm font-medium ${running ? 'text-green-300' : 'text-gray-400'}`}>{running ? 'En uso' : 'Esperando'}</span>
+                    </div>
+                    <div className="flex items-center">
+                        <span className={`h-3 w-3 rounded-full ${running ? 'bg-green-400 animate-pulse' : 'bg-gray-500'}`} />
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const start = async () => {
         if (webSocket.current)
@@ -290,13 +345,17 @@ export default function Bot() {
         <>
             <AppHeader />
             <main className="flex min-h-screen flex-col items-center justify-between p-24 w-full">
-                <div className="max-w-3xl w-full">
+                <div className="max-w-3xl w-full space-y-6">
                     <h1 className="text-2xl font-bold mb-4">Bot Realtime</h1>
-                    <div className="mb-4">
+
+                    {/* Tarjeta de estado del bot */}
+                    <BotStatus running={running} model={event.session.model} />
+
+                    <div className="mb-4 flex justify-center gap-4">
                         {!running ? (
-                            <button onClick={start} className="px-4 py-2 bg-green-600 text-white rounded">Start Recording</button>
+                            <button onClick={start} className="px-4 py-2 bg-green-600 text-white rounded">Iniciar Asistente</button>
                         ) : (
-                            <button onClick={stop} className="px-4 py-2 bg-red-600 text-white rounded">Stop Recording</button>
+                            <button onClick={stop} className="px-4 py-2 bg-red-600 text-white rounded">Detener Asistente</button>
                         )}
                     </div>
                 </div>
