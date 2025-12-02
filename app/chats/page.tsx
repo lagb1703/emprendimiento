@@ -56,7 +56,7 @@ export default function ChatPage() {
             console.warn('[v0] router.refresh failed:', e)
           }
         })()
-      }, 1500)
+      }, 3000)
       return () => clearTimeout(timer)
     }
   }, [chatId, sendMessage, messages])

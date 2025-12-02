@@ -1,4 +1,22 @@
 import { neon } from "@neondatabase/serverless"
+import { ChatOpenAI } from "@langchain/openai";
+import { PromptTemplate } from '@langchain/core/prompts';
+import { RunnableSequence } from '@langchain/core/runnables';
+const llm = new ChatOpenAI({
+  openAIApiKey: process.env.OPENAI_API_KEY!,
+  temperature: 0.7
+})
+
+const extractPrompt = new PromptTemplate({
+  template: `Dado el siguiente texto, devuelve únicamente un JSON con las claves: patient_name (string), patient_document (string), patient_context (string).
+Texto:
+"{text}"
+
+Respuesta:`,
+  inputVariables: ['text']
+})
+
+const chain = RunnableSequence.from([extractPrompt, llm]);
 
 const sql = neon(process.env.NEON_DATABASE_URL!)
 
@@ -10,6 +28,9 @@ export type Chat = {
   created_at: Date
   updated_at: Date
   deleted_at?: Date
+  patient_name: string | null
+  patient_document: string | null
+  patient_context: string | null
 }
 
 export type Message = {
@@ -95,6 +116,21 @@ export async function addMessage(
     VALUES (${chatId}, ${userId}, ${content}, ${role})
     RETURNING *
   `
+  if (role === "user") {
+    const response = await chain.invoke({ text: content });
+    try {
+      const parsed = JSON.parse(response.text);
+      await sql`
+        UPDATE chats
+        SET patient_name = coalesce(${parsed.patient_name}, patient_name),
+            patient_document = coalesce(${parsed.patient_document}, patient_document),
+            patient_context = coalesce(${parsed.patient_context}, patient_context),
+            title = coalesce(${parsed.patient_name ? `Consulta de ${parsed.patient_name}-${parsed.patient_document}` : null}, title),
+            updated_at = NOW()
+        WHERE id = ${chatId}
+      `
+    } catch { }
+  }
   return result[0] as Message
 }
 

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { addMessage, getMessages, addAttachment } from "@/lib/db"
+import { addMessage, getMessages, addAttachment, getChatById } from "@/lib/db"
 import { openai } from '@ai-sdk/openai';
 import { streamText } from 'ai';
 import fs from 'fs/promises'
@@ -81,7 +81,6 @@ export async function POST(request: NextRequest, props: { params: Params }) {
       }
     }
 
-    // Procesar campo 'sound' (audio)
     const soundEntry = form.get('sound')
     if (soundEntry && typeof (soundEntry as any).arrayBuffer === 'function') {
       // @ts-ignore
@@ -191,12 +190,21 @@ export async function POST(request: NextRequest, props: { params: Params }) {
         if (combinedUserContent.length) {
           chatMessages.push({ role: 'user' as const, content: combinedUserContent })
         }
-
+        const chat = await getChatById(params.id)
         const result = streamText({
           model: openai('gpt-4.1'),
           messages: chatMessages,
           system:
-            "Eres un asistente de IA amable y útil especializado en salud mental. Proporciona respuestas empáticas, informativas y basadas en evidencia.",
+            `
+            Eres un asistente de IA amable y útil especializado en salud mental. 
+            Recuerda que estas siendo utilizado por un psicologo profesional para asistir en la atencion de sus pacientes.
+            Proporciona respuestas empáticas, informativas y basadas en evidencia.
+            Recuerda pedir los datos basicos del paciente si no existen (nombre, documento, y contexto sobre su problema) para poder ayudarle mejor.
+            Datos de la persona
+            Nombre: ${chat?.patient_name || 'desconocido'}
+            Documento: ${chat?.patient_document || 'desconocido'}
+            contexto: ${chat?.patient_context || 'desconocido'}
+          `,
           temperature: 0.7,
           maxOutputTokens: 1024,
           providerOptions: {
